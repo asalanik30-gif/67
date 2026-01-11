@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Pill – Big Transformations</title>
+<style>
+  body { font-family: Arial; background:#222; color:#fff; text-align:center; padding:30px; }
+  #game { max-width:600px; margin:0 auto; }
+  .character { margin:20px auto; width:150px; height:300px; position:relative; }
+  .shirt { background:#f55; width:100%; height:60%; border-radius:15px 15px 0 0; position:absolute; top:0; transition:all 0.5s; }
+  .bossum { background:#ff0; width:100%; height:20%; position:absolute; bottom:40%; border-radius:50%; transition:all 0.5s; }
+  .butt { background:#0f0; width:100%; height:20%; position:absolute; bottom:0; border-radius:50%; transition:all 0.5s; }
+  button { padding:10px 20px; font-size:16px; margin:5px; cursor:pointer; border-radius:5px; }
+  .log { margin-top:20px; min-height:50px; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<div id="game">
+  <h1>💊 The Pill – Big Transformations</h1>
+
+  <div id="lisa" class="character">
+    <div class="shirt" id="lisaShirt"></div>
+    <div class="bossum" id="lisaBossum"></div>
+    <div class="butt" id="lisaButt"></div>
+  </div>
+
+  <div id="sophie" class="character">
+    <div class="shirt" id="sophieShirt"></div>
+    <div class="bossum" id="sophieBossum"></div>
+    <div class="butt" id="sophieButt"></div>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <div id="choices"></div>
+</div>
+
+<script>
+let state = {
+  lisa: { bossum:0, butt:0 },
+  sophie: { bossum:0, butt:0 },
+  step: 0
+};
+
+function showLog(text) {
+  document.getElementById("log").innerText = text;
+}
+
+function updateVisuals() {
+  // Exaggerated growth: each step adds 30% per unit
+  document.getElementById("lisaBossum").style.height = (20 + state.lisa.bossum*30) + "%";
+  document.getElementById("lisaButt").style.height = (20 + state.lisa.butt*30) + "%";
+  document.getElementById("lisaShirt").style.height = (60 + state.lisa.bossum*30) + "%";
+  document.getElementById("lisaShirt").style.width = (100 + state.lisa.bossum*30) + "%";
+
+  document.getElementById("sophieBossum").style.height = (20 + state.sophie.bossum*30) + "%";
+  document.getElementById("sophieButt").style.height = (20 + state.sophie.butt*30) + "%";
+  document.getElementById("sophieShirt").style.height = (60 + state.sophie.bossum*30) + "%";
+  document.getElementById("sophieShirt").style.width = (100 + state.sophie.bossum*30) + "%";
+}
+
+function nextStep(choice=null) {
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+
+  if(state.step === 0) {
+    showLog("Lisa: Hey Brian, look at my new shirt! (pointing at her shirt)");
+    choicesDiv.innerHTML = `<button onclick="nextStep('nice')">It looks nice</button>
+                            <button onclick="nextStep('fine')">It looks fine</button>`;
+    state.step++;
+  } else if(state.step === 1) {
+    if(choice === 'nice') {
+      showLog("Lisa: Thanks! 😊\nSophie gets jealous and takes a pill… her butt enlarges a LOT!");
+      state.sophie.butt += 2; // big growth
+      updateVisuals();
+      setTimeout(()=>showLog("Sophie playfully says: 'You're my friend, not her!'") ,2000);
+    } else if(choice === 'fine') {
+      showLog("Lisa: How 'bout now? (she takes a pill…)");
+      state.lisa.bossum += 2; // big growth
+      updateVisuals();
+      setTimeout(()=>showLog("Lisa: Looks and personality matter more than body type!"),2000);
+      choicesDiv.innerHTML = `<button onclick="nextStep('no')">No</button>
+                              <button onclick="nextStep('dontcare')">I don't care</button>`;
+      state.step++;
+      return;
+    }
+    state.step++;
+    choicesDiv.innerHTML = `<button onclick="endGame()">End</button>`;
+  } else if(state.step === 2) {
+    if(choice === 'no') {
+      showLog("Sophie takes more pills in cartoonish exaggeration… hilarious chaos!");
+      state.sophie.butt += 3; // very big growth
+      updateVisuals();
+    } else if(choice === 'dontcare') {
+      showLog("Both say: 'Fine, we don't care too!' The story ends peacefully.");
+    }
+    choicesDiv.innerHTML = `<button onclick="endGame()">End</button>`;
+  }
+}
+
+function endGame() {
+  showLog("🎉 The cartoon transformation story has ended!");
+  document.getElementById("choices").innerHTML = "";
+}
+
+// Start the story
+nextStep();
+</script>
+
+</body>
+</html>
