@@ -1,112 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>The Pill – Big Transformations</title>
+<meta charset="utf-8" />
+<title>The Pill – Cartoon Humans (Outfits & Zoom)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  body { font-family: Arial; background:#222; color:#fff; text-align:center; padding:30px; }
-  #game { max-width:600px; margin:0 auto; }
-  .character { margin:20px auto; width:150px; height:300px; position:relative; }
-  .shirt { background:#f55; width:100%; height:60%; border-radius:15px 15px 0 0; position:absolute; top:0; transition:all 0.5s; }
-  .bossum { background:#ff0; width:100%; height:20%; position:absolute; bottom:40%; border-radius:50%; transition:all 0.5s; }
-  .butt { background:#0f0; width:100%; height:20%; position:absolute; bottom:0; border-radius:50%; transition:all 0.5s; }
-  button { padding:10px 20px; font-size:16px; margin:5px; cursor:pointer; border-radius:5px; }
-  .log { margin-top:20px; min-height:50px; font-weight:bold; }
+  :root{
+    --bg:#0b0b0b;
+    --panel:#151515;
+    --skin1:#ffdfc7;
+    --skin2:#f2c9a5;
+    --accent:#ffd54f;
+    --butt-grad-1:#0fbf3f;
+    --butt-grad-2:#7fff7f;
+    --gloss: rgba(255,255,255,0.22);
+  }
+  body{ margin:0; font-family:Inter,system-ui,Arial,sans-serif; background:linear-gradient(180deg,#060606 0%, #0f0f0f 100%); color:#fff; display:flex; justify-content:center; padding:28px; }
+  #game{ width:min(980px,96%); background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,0.6); }
+  h1{ margin:6px 0 12px; font-size:20px; text-align:center; }
+
+  /* Stage */
+  .stage{ width:100%; height:520px; max-height:66vh; background:transparent; border-radius:10px; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; }
+  .character-container{ width:100%; display:flex; justify-content:space-around; align-items:flex-end; transition:transform .6s ease; transform-origin:center center; }
+
+  /* Character */
+  .character{ width:220px; height:520px; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; margin:0 6px; transition:transform .6s ease, filter .3s ease; }
+  .head{ width:96px; height:96px; background:linear-gradient(180deg,var(--skin1),var(--skin2)); border-radius:50%; position:relative; top:8px; box-shadow:0 8px 30px rgba(0,0,0,0.45); z-index:10; display:flex; align-items:center; justify-content:center; }
+  .hair{ position:absolute; top:-8px; width:116px; height:52px; border-radius:48px 48px 18px 18px; z-index:12; }
+  .eye{ width:8px; height:8px; background:#111; border-radius:50%; margin:0 12px; display:inline-block; }
+  .mouth{ width:32px; height:8px; border-radius:8px/6px; background:rgba(0,0,0,.45); margin-top:12px; }
+
+  .shoulders{ width:160px; height:28px; position:relative; top:50px; z-index:6; }
+  .torso{ width:140px; height:170px; border-radius:24px; position:relative; top:42px; z-index:7; box-shadow:inset 0 -12px rgba(0,0,0,0.18); overflow:visible; }
+
+  /* clothing base (under layers) */
+  .pantsBase{ position:absolute; bottom:80px; left:50%; transform:translateX(-50%); width:156px; height:132px; border-radius:18px; z-index:3; background:linear-gradient(180deg,#2a2a2a,#111); }
+
+  /* bossum & butt focal zones */
+  .bossum{ position:absolute; bottom:142px; left:50%; transform:translateX(-50%); width:120px; height:40px; background:var(--accent); border-radius:48px; z-index:8; box-shadow:0 8px 24px rgba(0,0,0,0.35); transition:all .6s cubic-bezier(.2,.9,.2,1); }
+  .butt{ position:absolute; bottom:36px; left:50%; transform:translateX(-50%); width:120px; height:56px; border-radius:52px; z-index:9; transition:all .6s cubic-bezier(.2,.9,.2,1); background: linear-gradient(135deg, var(--butt-grad-1) 18%, var(--butt-grad-2) 82%); box-shadow:0 18px 44px rgba(0,0,0,.5); }
+
+  /* shiny sporty crop-top (Lisa) */
+  .crop-top{
+    position:absolute; left:50%; transform:translateX(-50%); top:78px; width:130px; height:78px; border-radius:18px 18px 9px 9px; z-index:11;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 10px 28px rgba(0,0,0,0.45); overflow:visible;
+    background: linear-gradient(180deg,#ff6f5a,#d94635);
+    border:2px solid rgba(255,255,255,0.05);
+  }
+  .crop-top::after{
+    /* glossy highlight */
+    content:''; position:absolute; left:6px; right:6px; top:6px; height:22px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.06)); mix-blend-mode:screen; pointer-events:none;
+  }
+  .crop-top .stripes{
+    position:absolute; left:10px; right:10px; bottom:8px; height:18px; display:flex; gap:8px; justify-content:center; align-items:center; z-index:12;
+  }
+  .crop-top .stripes span{ display:block; width:36px; height:4px; background:rgba(255,255,255,0.95); border-radius:2px; box-shadow:0 1px 0 rgba(0,0,0,0.18); transform:skewX(-8deg); opacity:0.98; }
+
+  /* shiny sporty tights (Lisa) */
+  .tights{
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%); width:170px; height:240px; z-index:6; border-radius:22px; pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 10%, rgba(0,0,0,0.18) 100%),
+      linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+    box-shadow: inset 0 14px 28px rgba(255,255,255,0.02);
+    overflow:visible;
+  }
+  .tights::before{
+    /* three sporty stripes along thigh */
+    content:''; position:absolute; left:26px; top:18px; width:8px; height:196px; background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6));
+    box-shadow: 18px 0 0 0 rgba(255,255,255,0.95), 36px 0 0 0 rgba(255,255,255,0.95);
+    border-radius:6px;
+    mix-blend-mode:screen;
+    opacity:0.95;
+    transform:skewX(-6deg);
+  }
+  .tights::after{
+    /* sheen highlight */
+    content:''; position:absolute; left:10px; right:10px; top:8px; height:36px; border-radius:20px; background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.02));
+    mix-blend-mode:screen;
+    transform:rotate(-6deg);
+  }
+
+  /* Sophie: thin white bra */
+  .thin-bra{
+    position:absolute; left:50%; transform:translateX(-50%); top:86px; width:128px; height:62px; z-index:11; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(180deg, #ffffff, #f5f5f5);
+    opacity:0.96;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+    border:1px solid rgba(0,0,0,0.06);
+  }
+  .thin-bra::after{
+    content:''; position:absolute; left:10px; right:10px; top:8px; height:16px; background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6)); border-radius:8px; mix-blend-mode:screen;
+  }
+  .thin-bra .strap{ position:absolute; top:-6px; width:28px; height:6px; background:rgba(255,255,255,0.9); border-radius:6px; left:18px; transform:rotate(-6deg); }
+  .thin-bra .strap.right{ left:auto; right:18px; transform:rotate(6deg); }
+
+  /* Sophie faux-commando leggings (tight but with seam illusion) */
+  .faux-leggings{
+    position:absolute; bottom:32px; left:50%; transform:translateX(-50%); width:168px; height:240px; z-index:6; border-radius:22px; background: linear-gradient(180deg,#111111,#2b2b2b); overflow:visible;
+    box-shadow: inset 0 8px 20px rgba(255,255,255,0.02);
+  }
+  .faux-leggings::before{
+    /* seam line (faux commando) to hint 'no visible underwear' */
+    content:''; position:absolute; left:50%; transform:translateX(-50%); width:10px; height:210px; top:14px; background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)); border-radius:6px;
+    mix-blend-mode:multiply; opacity:0.9;
+  }
+  .faux-leggings::after{
+    /* subtle glossy highlight */
+    content:''; position:absolute; left:12px; right:12px; top:8px; height:32px; border-radius:18px; background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+    mix-blend-mode:screen; transform:skewX(-6deg);
+  }
+
+  /* arms/legs styling */
+  .arm{ width:26px; height:100px; background:linear-gradient(180deg,var(--skin1),var(--skin2)); border-radius:16px; position:absolute; top:164px; z-index:4; box-shadow:0 8px 14px rgba(0,0,0,0.22); }
+  .arm.left{ left:24%; transform-origin:top center; }
+  .arm.right{ right:24%; transform-origin:top center; }
+  .leg{ width:34px; height:128px; background:linear-gradient(180deg,#2a2a2a,#111); position:absolute; bottom:0; border-radius:16px; z-index:2; }
+  .leg.left{ left:38%; }
+  .leg.right{ right:38%; }
+
+  /* growth animation */
+  @keyframes growBounce { 0%{transform:scale(1);} 45%{transform:scale(1.18);} 75%{transform:scale(.95);} 100%{transform:scale(1);} }
+  .grow{ animation:growBounce .55s cubic-bezier(.2,.9,.2,1); }
+
+  /* focus zoom */
+  .character.focus{ transform: scale(1.55) translateY(-24px); filter:drop-shadow(0 24px 40px rgba(0,0,0,0.55)); z-index:40; }
+  .character.focus-bossum{ transform: scale(1.45) translateY(-8px); }
+  .character.focus-butt{ transform: scale(1.6) translateY(-44px); }
+  .character.dim{ filter:brightness(.62) saturate(.8) grayscale(.08); opacity:.9; }
+
+  /* log & buttons */
+  .log{ margin-top:12px; min-height:72px; font-weight:600; font-size:16px; color:#f7f7f7; padding:10px 12px; background:rgba(255,255,255,0.02); border-radius:10px; }
+  .button-container{ margin-top:14px; display:flex; justify-content:center; flex-wrap:wrap; gap:10px; }
+  button{ padding:10px 14px; font-size:15px; cursor:pointer; border-radius:10px; border:0; background:linear-gradient(180deg,#2b9cff,#0077cc); color:#fff; box-shadow:0 8px 18px rgba(0,0,0,.45); }
+  @media (max-width:820px){ .stage{ height:520px; } .character{ width:180px; height:480px; } }
 </style>
 </head>
 <body>
+  <div id="game">
+    <h1>💊 The Pill – Cartoon Humans (Outfitted & Focus Zoom)</h1>
 
-<div id="game">
-  <h1>💊 The Pill – Big Transformations</h1>
+    <div class="stage" id="stage">
+      <div class="character-container" id="characterContainer">
 
-  <div id="lisa" class="character">
-    <div class="shirt" id="lisaShirt"></div>
-    <div class="bossum" id="lisaBossum"></div>
-    <div class="butt" id="lisaButt"></div>
+        <!-- Lisa -->
+        <div id="lisa" class="character" aria-label="Lisa">
+          <div class="head" role="img" aria-hidden="true">
+            <div class="hair" style="background:linear-gradient(180deg,#2b1f12,#1b0f06);"></div>
+            <div style="position:relative; z-index:13; text-align:center;">
+              <span class="eye" style="margin-right:12px;"></span>
+              <span class="eye" style="margin-left:12px;"></span>
+              <div class="mouth"></div>
+            </div>
+          </div>
+
+          <div class="shoulders"></div>
+
+          <!-- Lisa's torso is kept so crop-top sits on top -->
+          <div class="torso" style="background:linear-gradient(180deg,#2b2b2b,#111);"></div>
+
+          <!-- crop top (shiny, sporty with three stripes) -->
+          <div class="crop-top" id="lisaCrop">
+            <div class="stripes" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- shiny tights overlay (sporty three stripes) -->
+          <div class="tights" id="lisaTights" aria-hidden="true"></div>
+
+          <div class="pantsBase" aria-hidden="true"></div>
+          <div class="bossum" id="lisaBossum" aria-hidden="true"></div>
+          <div class="butt" id="lisaButt" aria-hidden="true"></div>
+
+          <div class="arm left" style="transform: rotate(-6deg);"></div>
+          <div class="arm right" style="transform: rotate(6deg);"></div>
+
+          <div class="leg left"></div>
+          <div class="leg right"></div>
+        </div>
+
+        <!-- Sophie -->
+        <div id="sophie" class="character" aria-label="Sophie">
+          <div class="head" role="img" aria-hidden="true">
+            <div class="hair" style="background:linear-gradient(180deg,#7a3b12,#5c2708);"></div>
+            <div style="position:relative; z-index:13; text-align:center;">
+              <span class="eye" style="margin-right:12px;"></span>
+              <span class="eye" style="margin-left:12px;"></span>
+              <div class="mouth"></div>
+            </div>
+          </div>
+
+          <div class="shoulders"></div>
+          <div class="torso" style="background:linear-gradient(180deg,#2b2b2b,#111);"></div>
+
+          <!-- thin white bra -->
+          <div class="thin-bra" id="sophieBra" aria-hidden="true">
+            <div class="strap" style="left:16px;"></div>
+            <div class="strap right"></div>
+          </div>
+
+          <!-- faux commando leggings -->
+          <div class="faux-leggings" id="sophieLegs" aria-hidden="true"></div>
+
+          <div class="pantsBase" aria-hidden="true"></div>
+          <div class="bossum" id="sophieBossum" aria-hidden="true"></div>
+          <div class="butt" id="sophieButt" aria-hidden="true"></div>
+
+          <div class="arm left" style="transform: rotate(-8deg);"></div>
+          <div class="arm right" style="transform: rotate(8deg);"></div>
+
+          <div class="leg left"></div>
+          <div class="leg right"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="button-container" id="choices"></div>
   </div>
-
-  <div id="sophie" class="character">
-    <div class="shirt" id="sophieShirt"></div>
-    <div class="bossum" id="sophieBossum"></div>
-    <div class="butt" id="sophieButt"></div>
-  </div>
-
-  <div class="log" id="log"></div>
-
-  <div id="choices"></div>
-</div>
 
 <script>
-let state = {
-  lisa: { bossum:0, butt:0 },
-  sophie: { bossum:0, butt:0 },
-  step: 0
-};
+/* Story state and utilities (keeps prior behaviors) */
+let state = { lisa: { bossum:0, butt:0 }, sophie: { bossum:0, butt:0 }, step: 0 };
 
-function showLog(text) {
-  document.getElementById("log").innerText = text;
+const logEl = document.getElementById('log');
+const choicesEl = document.getElementById('choices');
+
+function showLog(text){
+  logEl.innerText = text;
 }
 
-function updateVisuals() {
-  // Exaggerated growth: each step adds 30% per unit
-  document.getElementById("lisaBossum").style.height = (20 + state.lisa.bossum*30) + "%";
-  document.getElementById("lisaButt").style.height = (20 + state.lisa.butt*30) + "%";
-  document.getElementById("lisaShirt").style.height = (60 + state.lisa.bossum*30) + "%";
-  document.getElementById("lisaShirt").style.width = (100 + state.lisa.bossum*30) + "%";
+/* animate a part and zoom focus on the character */
+function animateGrowthAndFocus(characterId, part){
+  const targetId = characterId + (part === 'butt' ? 'Butt' : 'Bossum');
+  const target = document.getElementById(targetId);
+  const char = document.getElementById(characterId);
+  const other = (characterId === 'lisa') ? document.getElementById('sophie') : document.getElementById('lisa');
+  if(!target || !char) return;
 
-  document.getElementById("sophieBossum").style.height = (20 + state.sophie.bossum*30) + "%";
-  document.getElementById("sophieButt").style.height = (20 + state.sophie.butt*30) + "%";
-  document.getElementById("sophieShirt").style.height = (60 + state.sophie.bossum*30) + "%";
-  document.getElementById("sophieShirt").style.width = (100 + state.sophie.bossum*30) + "%";
+  // trigger growth animation (bounce)
+  target.classList.remove('grow');
+  void target.offsetWidth;
+  target.classList.add('grow');
+
+  // focus character and dim other
+  char.classList.remove('focus-butt','focus-bossum','focus');
+  other.classList.remove('dim');
+  void char.offsetWidth;
+
+  if(part === 'butt'){
+    char.classList.add('focus','focus-butt');
+  } else {
+    char.classList.add('focus','focus-bossum');
+  }
+  other.classList.add('dim');
+
+  // remove focus after delay
+  setTimeout(() => {
+    char.classList.remove('focus','focus-butt','focus-bossum');
+    other.classList.remove('dim');
+    target.classList.remove('grow');
+  }, 1400);
 }
 
-function nextStep(choice=null) {
-  const choicesDiv = document.getElementById("choices");
-  choicesDiv.innerHTML = "";
+/* update visible sizes based on state */
+function updateVisuals(){
+  const unit = 30; // px per growth step adjusted for proportions
 
-  if(state.step === 0) {
-    showLog("Lisa: Hey Brian, look at my new shirt! (pointing at her shirt)");
-    choicesDiv.innerHTML = `<button onclick="nextStep('nice')">It looks nice</button>
-                            <button onclick="nextStep('fine')">It looks fine</button>`;
-    state.step++;
-  } else if(state.step === 1) {
-    if(choice === 'nice') {
-      showLog("Lisa: Thanks! 😊\nSophie gets jealous and takes a pill… her butt enlarges a LOT!");
-      state.sophie.butt += 2; // big growth
-      updateVisuals();
-      setTimeout(()=>showLog("Sophie playfully says: 'You're my friend, not her!'") ,2000);
-    } else if(choice === 'fine') {
-      showLog("Lisa: How 'bout now? (she takes a pill…)");
-      state.lisa.bossum += 2; // big growth
-      updateVisuals();
-      setTimeout(()=>showLog("Lisa: Looks and personality matter more than body type!"),2000);
-      choicesDiv.innerHTML = `<button onclick="nextStep('no')">No</button>
-                              <button onclick="nextStep('dontcare')">I don't care</button>`;
-      state.step++;
-      return;
-    }
-    state.step++;
-    choicesDiv.innerHTML = `<button onclick="endGame()">End</button>`;
-  } else if(state.step === 2) {
-    if(choice === 'no') {
-      showLog("Sophie takes more pills in cartoonish exaggeration… hilarious chaos!");
-      state.sophie.butt += 3; // very big growth
-      updateVisuals();
-    } else if(choice === 'dontcare') {
-      showLog("Both say: 'Fine, we don't care too!' The story ends peacefully.");
-    }
-    choicesDiv.innerHTML = `<button onclick="endGame()">End</button>`;
+  // Lisa sizes
+  const lisaBossH = 40 + state.lisa.bossum * unit;
+  const lisaButH  = 56 + state.lisa.butt * unit;
+  const lisaBossW = 120 + state.lisa.bossum * (unit * 0.9);
+  const lisaButW  = 120 + state.lisa.butt * (unit * 0.9);
+
+  // Sophie sizes
+  const sophBossH = 40 + state.sophie.bossum * unit;
+  const sophButH  = 56 + state.sophie.butt * unit;
+  const sophBossW = 120 + state.sophie.bossum * (unit * 0.9);
+  const sophButW  = 120 + state.sophie.butt * (unit * 0.9);
+
+  // apply
+  const el = id => document.getElementById(id);
+  const lisaBoss = el('lisaBossum'); const lisaBut = el('lisaButt');
+  const sophBoss = el('sophieBossum'); const sophBut = el('sophieButt');
+
+  if(lisaBoss && lisaBut && sophBoss && sophBut){
+    lisaBoss.style.height = lisaBossH + 'px';
+    lisaBoss.style.width  = lisaBossW + 'px';
+    lisaBut.style.height  = lisaButH  + 'px';
+    lisaBut.style.width   = lisaButW  + 'px';
+
+    sophBoss.style.height = sophBossH + 'px';
+    sophBoss.style.width  = sophBossW + 'px';
+    sophBut.style.height  = sophButH  + 'px';
+    sophBut.style.width   = sophButW  + 'px';
   }
 }
 
-function endGame() {
-  showLog("🎉 The cartoon transformation story has ended!");
-  document.getElementById("choices").innerHTML = "";
+/* wrapper to update then animate focus */
+function growthAndFocus(characterId, part){
+  updateVisuals();
+  animateGrowthAndFocus(characterId, part);
 }
 
-// Start the story
+/* Story / choice flow (keeps previous branching) */
+function nextStep(choice=null){
+  choicesEl.innerHTML = '';
+  if(state.step === 0){
+    showLog("Lisa: Hey Brian, look at my new crop top!");
+    choicesEl.innerHTML = `<button onclick="nextStep('nice')">It looks nice</button>
+                           <button onclick="nextStep('fine')">It looks fine</button>`;
+    state.step++; return;
+  }
+
+  if(state.step === 1){
+    if(choice === 'nice'){
+      showLog("Lisa: Thanks! 😊");
+      // Sophie gets jealous and grows butt
+      state.sophie.butt += 2;
+      growthAndFocus('sophie','butt');
+      setTimeout(()=> {
+        showLog("Sophie: You're my friend, not her! She keeps being silly and grows more comically.");
+        state.sophie.butt += 3;
+        growthAndFocus('sophie','butt');
+        choicesEl.innerHTML = `<button onclick="nextStep('continue')">Continue</button>`;
+      }, 900);
+      state.step++; return;
+    } else if(choice === 'fine'){
+      showLog("Lisa: How 'bout now? (she takes a pill…)");
+      state.lisa.bossum += 2;
+      growthAndFocus('lisa','bossum');
+      setTimeout(()=> {
+        showLog("Lisa: Looks and personality matter more than body type!");
+        choicesEl.innerHTML = `<button onclick="nextStep('no')">No</button>
+                               <button onclick="nextStep('dontcare')">I don't care</button>`;
+      }, 900);
+      state.step++; return;
+    }
+  }
+
+  if(state.step === 2){
+    if(choice === 'no'){
+      showLog("Sophie takes more pills comically… huge exaggeration!");
+      state.sophie.butt += 3;
+      growthAndFocus('sophie','butt');
+      choicesEl.innerHTML = `<button onclick="endGame()">End Story</button>`;
+    } else if(choice === 'dontcare'){
+      showLog("Both say: 'Fine, we don't care too!' The story ends peacefully.");
+      choicesEl.innerHTML = `<button onclick="endGame()">End Story</button>`;
+    } else if(choice === 'continue'){
+      showLog("The transformations settle, everyone laughs at the silly chaos.");
+      choicesEl.innerHTML = `<button onclick="endGame()">End Story</button>`;
+    }
+    state.step++; return;
+  }
+}
+
+function endGame(){
+  showLog("🎉 The cartoon transformation story has ended!");
+  choicesEl.innerHTML = '';
+}
+
+/* initialize */
+updateVisuals();
 nextStep();
 </script>
-
 </body>
 </html>
